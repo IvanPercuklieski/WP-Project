@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Workspaces</title>
+</head>
+<body>
+<h2>Your Workspaces</h2>
+<ul th:if="${workspaceList.size() > 0}">
+    <li th:each="workspace : ${workspaceList}">
+        <a th:href="@{|/workspace/${workspace.id}|}">
+            <span th:text="${workspace.name}">Workspace Name</span>
+        </a>
+    </li>
+</ul>
+
+<p th:if="${workspaceList.size() == 0}">
+    You are not part of any workspaces yet.
+</p>
+
+<a th:href="@{/workspace/form}">Create a Workspace</a>
+
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
+
+</body>
+</html>

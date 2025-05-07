@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Workspace</title>
+</head>
+<body>
+<h1 th:text="${workspace.name}">Workspace Name</h1>
+
+<div th:if="${isOwner}">
+    <a th:href="@{/workspace/{id}/admin (id=${workspace.id})}">
+        <button>Admin Page</button>
+    </a>
+</div>
+</body>
+</html>

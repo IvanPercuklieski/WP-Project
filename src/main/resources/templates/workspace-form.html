@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Workspace</title>
+</head>
+<body>
+<h2>Create New Workspace</h2>
+
+
+
+<form th:action="@{/workspace/create}" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required />
+    <button type="submit">Create</button>
+</form>
+
+<p><a th:href="@{/workspace/all}">Back to Workspaces</a></p>
+
+</body>
+</html>

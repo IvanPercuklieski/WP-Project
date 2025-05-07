@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Workspace Admin Page</title>
+</head>
+<body>
+    <div>
+        <h1 th:text="'Admin page for the ' + ${workspace.name} + ' workspace'"></h1>
+
+        <a th:href="@{'/workspace/' + ${workspace.id}}">
+            <button>Back to Workspace</button>
+        </a>
+
+        <h2>Invite link:</h2>
+
+
+        <p th:if="${inviteToken != null}" th:text="'Link: /workspace/join/' + ${inviteToken.token} + ' (Valid for 7 days)'"></p>
+
+
+        <form th:if="${inviteToken == null}" th:action="@{/workspace/{id}/generate-invite(id=${workspace.id})}" method="post">
+            <button type="submit">Generate Invite Link</button>
+        </form>
+
+        <h2>Members:</h2>
+        <ul>
+            <li th:each="member : ${members}" th:text="${member.username}"></li>
+        </ul>
+    </div>
+</body>
+</html>
