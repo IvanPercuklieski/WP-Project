@@ -164,7 +164,7 @@ public class WorkspaceController {
         if (workspace.getMemberships().stream()
                 .anyMatch(m -> m.getUser().getId().equals(user.getId()))) {
             model.addAttribute("error", "You are already a member of this workspace.");
-            return "error-page";  // Show an error page if the user is already a member
+            return "error-page";
         }
 
 
