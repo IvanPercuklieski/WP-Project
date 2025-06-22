@@ -9,7 +9,7 @@
 <div class="container">
     <h2 class="text-center pt-4 mb-4">Login</h2>
 
-    <!-- Spring Security will handle any error messages -->
+
     <div th:if="${param.error}" class="alert alert-danger text-center">
         Invalid username or password
     </div>
@@ -19,7 +19,7 @@
 
     <div class="d-flex justify-content-center">
         <div class="p-4 border rounded" style="width: 320px;">
-            <!-- Spring Security requires this specific action URL -->
+
             <form th:action="@{/login}" method="post">
                 <div class="mb-3">
                     <input type="text" class="form-control"
