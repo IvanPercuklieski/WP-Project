@@ -18,6 +18,7 @@ public class Workspace {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     private String name;
 
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.LAZY)
@@ -39,4 +40,5 @@ public class Workspace {
     public List<Membership> getMemberships() {
         return memberships;
     }
+
 }

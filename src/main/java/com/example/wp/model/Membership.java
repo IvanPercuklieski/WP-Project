@@ -20,8 +20,8 @@ public class Membership {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @ManyToOne
-    @JoinColumn(name = "workspace_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_id", nullable = true)
     private Workspace workspace;
 
     public Workspace getWorkspace(){
@@ -48,4 +48,6 @@ public class Membership {
     public MembershipRole getRole() {
         return this.role;
     }
+
+
 }

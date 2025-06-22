@@ -22,8 +22,7 @@ public class InviteToken {
     @Column(nullable = false)
     private Instant expiresAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workspace_id", nullable = false)
+    @OneToOne
     private Workspace workspace;
 
     public InviteToken() {

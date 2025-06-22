@@ -10,10 +10,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
 
     private final UserServiceImpl userService;
 
@@ -36,6 +38,7 @@ public class SecurityConfig {
                         .authenticated()
                 )
                 .formLogin(form -> form
+                        .loginPage("/login")
                         .permitAll()
                         .defaultSuccessUrl("/workspace/all", true)
                 )

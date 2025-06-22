@@ -1,10 +1,12 @@
 package com.example.wp.controller;
 
 import com.example.wp.model.*;
+import com.example.wp.repository.MembershipRepository;
 import com.example.wp.repository.UserRepository;
 import com.example.wp.repository.WorkspaceRepository;
 import com.example.wp.service.InviteTokenService;
 import com.example.wp.service.UserServiceImpl;
+import com.example.wp.service.WorkspaceService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,11 +25,17 @@ public class WorkspaceController {
     private final UserServiceImpl userService;
     private final InviteTokenService inviteTokenService;
 
-    public WorkspaceController(UserRepository userRepository, WorkspaceRepository workspaceRepository, UserServiceImpl userService, InviteTokenService inviteTokenService) {
+    private final WorkspaceService workspaceService;
+    private final MembershipRepository membershipRepository;
+
+
+    public WorkspaceController(UserRepository userRepository, WorkspaceRepository workspaceRepository, UserServiceImpl userService, InviteTokenService inviteTokenService, WorkspaceService workspaceService, MembershipRepository membershipRepository) {
         this.userRepository = userRepository;
         this.workspaceRepository = workspaceRepository;
         this.userService = userService;
         this.inviteTokenService = inviteTokenService;
+        this.workspaceService = workspaceService;
+        this.membershipRepository = membershipRepository;
     }
 
 
@@ -59,15 +67,17 @@ public class WorkspaceController {
 
         Workspace workspace = new Workspace();
         workspace.setName(name);
+        workspaceRepository.save(workspace);
 
         Membership membership = new Membership();
         membership.setUser(user);
         membership.setWorkspace(workspace);
         membership.setRole(MembershipRole.OWNER);
+
         user.getMemberships().add(membership);
         workspace.getMemberships().add(membership);
 
-        workspaceRepository.save(workspace);
+        membershipRepository.save(membership);
 
         return "redirect:/workspace/all";
     }
@@ -107,10 +117,12 @@ public class WorkspaceController {
         }
 
         List<UserEntity> members = workspace.getMemberships().stream()
+                .filter(membership -> membership.getRole() != MembershipRole.OWNER)
                 .map(Membership::getUser)
                 .toList();
 
         InviteToken inviteToken = inviteTokenService.getValidTokenForWorkspace(id).orElse(null);
+
 
         model.addAttribute("workspace", workspace);
         model.addAttribute("members", members);
@@ -164,7 +176,7 @@ public class WorkspaceController {
         if (workspace.getMemberships().stream()
                 .anyMatch(m -> m.getUser().getId().equals(user.getId()))) {
             model.addAttribute("error", "You are already a member of this workspace.");
-            return "error-page";  // Show an error page if the user is already a member
+            return "error-page";
         }
 
 
@@ -176,6 +188,41 @@ public class WorkspaceController {
 
 
         workspaceRepository.save(workspace);
+
+        return "redirect:/workspace/all";
+    }
+
+    @PostMapping("/{workspaceId}/kick/{userId}")
+    public String kickUserFromWorkspace(
+            @PathVariable Long workspaceId,
+            @PathVariable Long userId,
+            Authentication authentication) {
+
+        UserEntity currentUser = (UserEntity) authentication.getPrincipal();
+        boolean success = workspaceService.kickUserFromWorkspace(workspaceId, userId, currentUser.getId());
+
+        if (!success) {
+            if (currentUser.getId().equals(userId)) {
+                return "redirect:/workspace/" + workspaceId + "/admin";
+            } else {
+                return "redirect:/workspace/all";
+            }
+        }
+
+        return "redirect:/workspace/" + workspaceId + "/admin";
+    }
+
+    @PostMapping("/{workspaceId}/delete")
+    public String deleteWorkspace(
+            @PathVariable Long workspaceId,
+            Authentication authentication) {
+
+        UserEntity currentUser = (UserEntity) authentication.getPrincipal();
+        boolean success = workspaceService.deleteWorkspace(workspaceId, currentUser.getId());
+
+        if (!success) {
+            return "redirect:/workspace/all";
+        }
 
         return "redirect:/workspace/all";
     }

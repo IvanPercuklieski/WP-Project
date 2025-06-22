@@ -2,14 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Workspace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
 </head>
 <body>
-<h1 th:text="${workspace.name}">Workspace Name</h1>
+<h1 class="fw-bold  text-center pt-2" th:text="'Workspace: ' +  ${workspace.name}">Workspace Name</h1>
 
-<div th:if="${isOwner}">
+<div class="d-flex justify-content-center pt-4" th:if="${isOwner}">
     <a th:href="@{/workspace/{id}/admin (id=${workspace.id})}">
-        <button>Admin Page</button>
+        <button class="btn btn-primary">Admin Page</button>
     </a>
+</div>
+
+<div class="pt-4 d-flex justify-content-center">
+    <p><a class="btn btn-secondary" th:href="@{/workspace/all}">Back to Workspaces</a></p>
 </div>
 </body>
 </html>

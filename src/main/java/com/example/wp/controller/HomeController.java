@@ -27,6 +27,11 @@ public class HomeController {
         return "Home Page";
     }
 
+    @GetMapping("/login")
+    public String showLoginForm(){
+        return "login-form";
+    }
+
     @GetMapping("/register")
     public String showRegForm(){
         return "register-form";

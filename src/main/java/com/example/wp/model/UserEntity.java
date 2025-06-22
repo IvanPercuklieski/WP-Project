@@ -23,7 +23,7 @@ public class UserEntity implements UserDetails {
 
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private java.util.List<Membership> memberships = new java.util.ArrayList<>();
 
     @Override
