@@ -40,4 +40,5 @@ public class UserServiceImpl implements UserDetailsService {
     public List<Workspace> getWorkspacesForUser(UserEntity user) {
         return workspaceRepository.findWorkspacesByUserWithMemberships(user);
     }
+
 }

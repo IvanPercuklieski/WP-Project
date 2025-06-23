@@ -25,5 +25,12 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
     @Query("delete from Membership m where m.workspace.id = :workspaceId")
     void deleteByWorkspace(@Param("workspaceId") Long workspaceId);
 
+    boolean existsByWorkspaceAndUser(Workspace workspace, UserEntity user);
 
+    default void addMembership(Workspace workspace, UserEntity user) {
+        Membership membership = new Membership();
+        membership.setWorkspace(workspace);
+        membership.setUser(user);
+        save(membership);
+    }
 }

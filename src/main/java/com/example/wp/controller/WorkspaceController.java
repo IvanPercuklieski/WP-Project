@@ -4,6 +4,7 @@ import com.example.wp.model.*;
 import com.example.wp.repository.MembershipRepository;
 import com.example.wp.repository.UserRepository;
 import com.example.wp.repository.WorkspaceRepository;
+import com.example.wp.service.InviteService;
 import com.example.wp.service.InviteTokenService;
 import com.example.wp.service.UserServiceImpl;
 import com.example.wp.service.WorkspaceService;
@@ -11,10 +12,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/workspace")
@@ -27,15 +32,17 @@ public class WorkspaceController {
 
     private final WorkspaceService workspaceService;
     private final MembershipRepository membershipRepository;
+    private final InviteService inviteService;
 
 
-    public WorkspaceController(UserRepository userRepository, WorkspaceRepository workspaceRepository, UserServiceImpl userService, InviteTokenService inviteTokenService, WorkspaceService workspaceService, MembershipRepository membershipRepository) {
+    public WorkspaceController(UserRepository userRepository, WorkspaceRepository workspaceRepository, UserServiceImpl userService, InviteTokenService inviteTokenService, WorkspaceService workspaceService, MembershipRepository membershipRepository, InviteService inviteService) {
         this.userRepository = userRepository;
         this.workspaceRepository = workspaceRepository;
         this.userService = userService;
         this.inviteTokenService = inviteTokenService;
         this.workspaceService = workspaceService;
         this.membershipRepository = membershipRepository;
+        this.inviteService = inviteService;
     }
 
 
@@ -44,7 +51,9 @@ public class WorkspaceController {
         UserEntity user = (UserEntity) authentication.getPrincipal();
 
         List<Workspace> workspaceList = userService.getWorkspacesForUser(user);
+        List<Invitation> invitations = inviteService.findPendingInvationsByUser(user.getId());
         model.addAttribute("workspaceList", workspaceList);
+        model.addAttribute("invites", invitations);
 
         return "All-Workspaces";
     }
@@ -121,12 +130,22 @@ public class WorkspaceController {
                 .map(Membership::getUser)
                 .toList();
 
+        List<UserEntity> nonMembers = userRepository.findUsersNotInWorkspace(workspace.getId());
+
         InviteToken inviteToken = inviteTokenService.getValidTokenForWorkspace(id).orElse(null);
 
+        Set<Long> invitedUserIds = inviteService.findPendingInvitesByWorkspace(workspace.getId())
+                .stream()
+                .map(invite -> invite.getInvitedUser().getId())
+                .collect(Collectors.toSet());
+
+        model.addAttribute("invitedUserIds", invitedUserIds);
 
         model.addAttribute("workspace", workspace);
         model.addAttribute("members", members);
         model.addAttribute("inviteToken", inviteToken);
+        model.addAttribute("nonmembers", nonMembers);
+        model.addAttribute("invitedUser", invitedUserIds);
 
         return "workspace-admin-page";
     }
@@ -224,6 +243,35 @@ public class WorkspaceController {
             return "redirect:/workspace/all";
         }
 
+        return "redirect:/workspace/all";
+    }
+
+    @PostMapping("/{workspaceId}/invite")
+    public String inviteUser(@PathVariable Long workspaceId, @RequestParam Long userId, Authentication authentication, RedirectAttributes redirectAttributes){
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid workspace ID"));
+        UserEntity inviter = (UserEntity) authentication.getPrincipal();
+        UserEntity invitedUser = userRepository.findById(userId).orElseThrow();
+
+        try {
+            inviteService.createInvite(invitedUser, workspace, inviter);
+            redirectAttributes.addFlashAttribute("success", "Invitation sent successfully!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/workspace/" + workspaceId + "/admin";
+    }
+
+    @PostMapping("/invites/accept")
+    public String acceptInvite(@RequestParam Long inviteId){
+        inviteService.acceptInvite(inviteId);
+        return "redirect:/workspace/all";
+    }
+
+    @PostMapping("/invites/decline")
+    public String declineInvite(@RequestParam Long inviteId){
+        inviteService.declineInvite(inviteId);
         return "redirect:/workspace/all";
     }
 
