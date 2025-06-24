@@ -7,6 +7,7 @@ import com.example.wp.model.Workspace;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface InviteRepository extends JpaRepository<Invitation, Long> {
     boolean existsByInvitedUserAndWorkspaceAndStatus(UserEntity user, Workspace workspace, InviteStatus inviteStatus);
@@ -14,4 +15,6 @@ public interface InviteRepository extends JpaRepository<Invitation, Long> {
     List<Invitation> findByInvitedUserIdAndStatus(Long userId, InviteStatus status);
 
     List<Invitation> findByWorkspaceIdAndStatus(Long workspaceId, InviteStatus status);
+
+    Optional<Invitation> findByInvitedUserAndWorkspaceAndStatus(UserEntity user, Workspace workspace, InviteStatus status);
 }

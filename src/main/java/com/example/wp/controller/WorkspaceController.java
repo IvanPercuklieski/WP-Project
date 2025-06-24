@@ -205,8 +205,9 @@ public class WorkspaceController {
         membership.setRole(MembershipRole.MEMBER);
         workspace.getMemberships().add(membership);
 
-
         workspaceRepository.save(workspace);
+
+        inviteService.deletePendingInviteForUserAndWorkspace(user, workspace);
 
         return "redirect:/workspace/all";
     }

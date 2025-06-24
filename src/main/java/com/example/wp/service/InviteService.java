@@ -9,6 +9,7 @@ import com.example.wp.repository.MembershipRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InviteService {
@@ -61,5 +62,10 @@ public class InviteService {
         Invitation invitation = inviteRepository.findById(invitationId).orElseThrow();
 
         inviteRepository.delete(invitation);
+    }
+
+    public void deletePendingInviteForUserAndWorkspace(UserEntity user, Workspace workspace) {
+        inviteRepository.findByInvitedUserAndWorkspaceAndStatus(user, workspace, InviteStatus.PENDING)
+                .ifPresent(inviteRepository::delete);
     }
 }
