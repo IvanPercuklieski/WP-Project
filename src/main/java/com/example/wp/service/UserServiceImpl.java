@@ -41,4 +41,11 @@ public class UserServiceImpl implements UserDetailsService {
         return workspaceRepository.findWorkspacesByUserWithMemberships(user);
     }
 
+    public Optional<UserEntity> findById(Long id){
+        return userRepository.findById(id);
+    }
+
+    public List<UserEntity> findUsersNotInWorkspace(Long id) {
+        return userRepository.findUsersNotInWorkspace(id);
+    }
 }

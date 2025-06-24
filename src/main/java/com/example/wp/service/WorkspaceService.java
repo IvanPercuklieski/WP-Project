@@ -8,6 +8,8 @@ import com.example.wp.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class WorkspaceService {
 
@@ -58,5 +60,17 @@ public class WorkspaceService {
         workspaceRepository.delete(workspace);
 
         return true;
+    }
+
+    public Optional<Workspace> findById(Long workspaceId) {
+        return workspaceRepository.findById(workspaceId);
+    }
+
+    public void addWorkspace(Workspace workspace) {
+        workspaceRepository.save(workspace);
+    }
+
+    public Optional<Object> findByName(String name) {
+        return workspaceRepository.findByName(name);
     }
 }
