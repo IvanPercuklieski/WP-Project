@@ -12,7 +12,6 @@ public class MembershipService {
         this.membershipRepository = membershipRepository;
     }
 
-
     public void addMembership(Membership membership) {
         membershipRepository.save(membership);
     }

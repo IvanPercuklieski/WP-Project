@@ -12,8 +12,6 @@ import java.util.Optional;
 public interface InviteTokenRepository extends JpaRepository<InviteToken, Long> {
     Optional<InviteToken> findByToken(String token);
 
-    boolean existsByWorkspaceIdAndExpiresAtAfter(Long workspaceId, java.time.Instant now);
-
     @Modifying
     @Query("DELETE FROM InviteToken it WHERE it.workspace = :workspace")
     void deleteByWorkspace(@Param("workspace") Workspace workspace);

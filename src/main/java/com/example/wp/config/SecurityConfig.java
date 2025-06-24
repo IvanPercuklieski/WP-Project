@@ -15,8 +15,6 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-
     private final UserServiceImpl userService;
 
     public SecurityConfig(UserServiceImpl userService) {
@@ -51,6 +49,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
 }

@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MembershipRepository extends JpaRepository<Membership, Long> {
-    Optional<Membership> findByUserAndWorkspace(UserEntity user, Workspace workspace);
-    Optional<Membership> findByUser_IdAndWorkspace_Id(Long userId, Long workspaceId);
-    List<Membership> findByWorkspace_Id(Long workspaceId);
 
     @Modifying
     @Query("DELETE FROM Membership m WHERE m.user.id = :userId AND m.workspace.id = :workspaceId")

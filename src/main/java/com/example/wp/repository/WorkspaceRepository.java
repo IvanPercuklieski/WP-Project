@@ -13,10 +13,6 @@ public interface WorkspaceRepository extends JpaRepository<Workspace, Long> {
 
     Optional<Object> findByName(String name);
 
-
     @Query("SELECT w FROM Workspace w JOIN FETCH w.memberships m WHERE m.user = :user")
     List<Workspace> findWorkspacesByUserWithMemberships(UserEntity user);
-
-
-
 }

@@ -22,7 +22,6 @@ public class UserServiceImpl implements UserDetailsService {
         this.workspaceRepository = workspaceRepository;
     }
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)

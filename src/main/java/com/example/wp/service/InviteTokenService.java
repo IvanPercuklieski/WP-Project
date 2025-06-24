@@ -23,7 +23,6 @@ public class InviteTokenService {
         this.inviteTokenRepository = inviteTokenRepository;
         this.workspaceRepository = workspaceRepository;
     }
-
     public Optional<InviteToken> getValidTokenForWorkspace(Long workspaceId) {
         return inviteTokenRepository.findAll().stream()
                 .filter(token -> token.getWorkspace().getId().equals(workspaceId) && token.getExpiresAt().isAfter(Instant.now()))
